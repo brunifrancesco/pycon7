@@ -1,0 +1,54 @@
+import functools 
+
+def memoize(obj):
+     cache = obj.cache = {}
+ 
+     @functools.wraps(obj)
+     def memoizer(*args, **kwargs):
+         if args not in cache:
+             cache[args] = obj(*args, **kwargs)
+         return cache[args]
+     return memoizer
+
+def facti(n):
+    if n == 0: return 1
+    f= 1
+    for i in range(2,n):
+        f *= i
+    return f
+
+def fact_nt(n):
+    if n == 0: return 1
+    else: return n*fact(n-1)
+
+def fact(n, acc=1):
+    if n == 0:
+        return acc
+    return fact(n-1, acc*n)
+
+@memoize
+def fact_m(n, acc=1):
+    if n == 0:
+        return acc
+    return fact(n-1, acc*n)
+
+import timeit
+from fn.monad import Option
+import statistics
+
+DEF_VALUES = (2,4,6,8,16,32,64,128,)
+
+def evaluate_func(func, value):
+    def launch_func():
+        start_time = timeit.default_timer()
+        func(value)
+        return timeit.default_timer()- start_time
+    return map(lambda item: launch_func(), range(0,10))
+
+def get_data():
+    return (
+        ("facti", Option(map(lambda item: evaluate_func(facti, item), DEF_VALUES)).map(lambda item: list(item)).map(lambda item: [statistics.mean(element) for element in item]).get_or([])),
+        ("fact", Option(map(lambda item: evaluate_func(fact, item), DEF_VALUES)).map(lambda item: list(item)).map(lambda item: [statistics.mean(element) for element in item]).get_or([])),
+        ("fact_nt", Option(map(lambda item: evaluate_func(fact_nt, item), DEF_VALUES)).map(lambda item: list(item)).map(lambda item: [statistics.mean(element) for element in item]).get_or([])),
+        ("fact_m", Option(evaluate_func(fact_m, 64)).map(lambda item: list(item)).get_or([])),
+        ) 
