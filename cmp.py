@@ -50,5 +50,5 @@ def get_data():
         ("facti", Option(map(lambda item: evaluate_func(facti, item), DEF_VALUES)).map(lambda item: list(item)).map(lambda item: [statistics.mean(element) for element in item]).get_or([])),
         ("fact", Option(map(lambda item: evaluate_func(fact, item), DEF_VALUES)).map(lambda item: list(item)).map(lambda item: [statistics.mean(element) for element in item]).get_or([])),
         ("fact_nt", Option(map(lambda item: evaluate_func(fact_nt, item), DEF_VALUES)).map(lambda item: list(item)).map(lambda item: [statistics.mean(element) for element in item]).get_or([])),
-        ("fact_m", Option(evaluate_func(fact_m, 64)).map(lambda item: list(item)).get_or([])),
+        ("fact_m", Option(map(lambda item: evaluate_func(fact_m, item), DEF_VALUES)).map(lambda item: list(item)).get_or([])),
         ) 
